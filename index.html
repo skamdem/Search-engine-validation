@@ -1,0 +1,91 @@
+<!doctype html>
+
+<head>
+	<meta charset="utf-8">
+	<script>
+		// TODO: create a handler
+	function setSearchEngine(event){
+		let my_form = document.getElementById("searchForm");
+
+		let radio_button = document.querySelector("input[name=engine]:checked");
+		let engine;
+		let printError = function(error, explicit){
+			console.log(`${explicit?"EXPLICIT":"INEXPLICIT"} ${error.name}: ${error.message}`);
+		}
+		try {
+			engine = radio_button.value;
+		} catch (e) {
+			if (e instanceof TypeError){
+				printError(e, true);
+			} else {
+				printError(e, false);
+			}
+		}
+
+		//console.log(engine);
+		let actionURL;
+		//console.log(actionURL);
+		if (engine === "google") {
+			actionURL = "https://www.google.com/";
+		} else if (engine === "duckduckgo") {
+			actionURL = "https://duckduckgo.com/";
+		} else if (engine === "bing") {
+			actionURL = "https://www.bing.com/search";
+		} else if (engine === "ask") {
+			actionURL = "https://www.ask.com/web";
+		}
+		my_form.setAttribute("action", actionURL)
+
+		//prevent url to encompass engine=google
+		
+		try {
+			radio_button.checked = false;//setAttribute(name,"")
+		} catch (e) {
+			if (e instanceof TypeError){
+				printError(e, true);
+			} else {
+				printError(e, false);
+			}
+		}
+		
+		//Add validation to your submit handler to make sure that the user has both selected a search engine and entered a (non-empty) search term.
+		let validationOK = true;
+		let problems = [];
+		if (typeof actionURL == "undefined") {
+			validationOK = false;
+			problems.push("You must chose an URL!");
+			//console.log("You must chose an URL!");
+		}
+		if (document.querySelector("#q").value.trim() === "") {
+			validationOK = false;
+			problems.push("You must enter a search string!")
+			//console.log("You must enter a search string!");
+		}
+		if (!validationOK) {
+			let str = problems[0];
+			for (let i=1; i < problems.length; i++){
+				str += "\n" + problems[i];
+			}
+			alert(str);
+			// stop the form submission
+			event.preventDefault();
+		}
+	}
+    window.addEventListener("load", function(){
+        // TODO: register the handler
+		let my_form = document.getElementById("searchForm");
+		my_form.addEventListener("submit", setSearchEngine);
+    });
+	</script>
+</head>
+
+<body>
+	<form id="searchForm" action="" method="GET">
+		<input type="text" name="q" id="q"/>
+		<label>Google<input type="radio" name="engine" value="google"/></label>
+		<label>DuckDuckGo<input type="radio" name="engine" value="duckduckgo"/></label>
+		<label>Bing<input type="radio" name="engine" value="bing"/></label>
+		<label>Ask<input type="radio" name="engine" value="ask"/></label>
+		<button>Go!</button>
+	 </form>
+</body>
